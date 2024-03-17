@@ -8,14 +8,14 @@ import {
 } from "@/components/ui/dropdown-menu";
 
 interface InputDropdownProps {
-  value: string;
+  value?: string;
   options: string[];
   onChange: (value: string) => void;
 }
 
-const InputDropdown: React.FC<InputDropdownProps> = ({ value, options, onChange }) => {
+const InputDropdown: React.FC<InputDropdownProps> = ({ value = '', options, onChange }) => {
   return (
-    <div className="py-3 w-80 relative">
+    <div className="w-full relative">
       <Input value={value} readOnly className="text-gray-300" />
       <DropdownMenu>
         <DropdownMenuTrigger className="absolute right-0 top-0 h-full flex items-center pr-2"><IoIosArrowDown /></DropdownMenuTrigger>
