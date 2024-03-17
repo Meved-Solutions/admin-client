@@ -2,10 +2,11 @@ import { BrowserRouter as Router, Routes, Route, useNavigate, useLocation, Link 
 import { useState, useEffect } from "react";
 import Home from './pages/Home';
 import Sidebar from './components/Sidebar';
-import Auth from "./pages/Auth";
+import Login from "./pages/Login";
 import Profile from './pages/Profile';
 import JobPostings from './pages/JobPostings';
 import Organizations from './pages/Organizations';
+import Register from './pages/Register';
 
 const Navigate = () => {
 
@@ -29,7 +30,8 @@ const Navigate = () => {
       {
         !isAuthenticated &&
             <Routes>
-              <Route path="/auth" element={<Auth/>}/>
+              <Route path="/auth" element={<Login/>}/>
+              <Route path="/register" element={<Register/>}/>
             </Routes>
       }
     </div>
