@@ -7,6 +7,7 @@ import Profile from './pages/Profile';
 import JobPostings from './pages/JobPostings';
 import Organizations from './pages/Organizations';
 import Register from './pages/Register';
+import JobPosting from './pages/JobPosting';
 
 const Navigate = () => {
 
@@ -23,6 +24,7 @@ const Navigate = () => {
           <Route path='/' element={<Home/>}/>
           <Route path='/profile' element={<Profile/>}/>
           <Route path='/postings' element={<JobPostings/>}/>
+          <Route path='/posting/:id' element={<JobPosting/>}/>
           <Route path='/organizations' element={<Organizations/>}/>
         </Routes>
         </div>

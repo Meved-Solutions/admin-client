@@ -3,7 +3,7 @@ import { SiAwsorganizations } from "react-icons/si";
 
 const navItems = [
   { name: 'Home', icon: IoHomeOutline, path: '/' },
-  { name: 'Job Posting', icon: IoBriefcaseOutline , path: '/postings' },
+  { name: 'Job Postings', icon: IoBriefcaseOutline , path: '/postings' },
   { name: 'Organizations', icon: SiAwsorganizations, path: '/organizations' },
   { name: 'LogOut', icon: IoLogOutOutline  },
 ];
