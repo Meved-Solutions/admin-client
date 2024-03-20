@@ -52,7 +52,7 @@ const JobPostings = () => {
   return (
     <div className="px-8 py-4">
       <h1 className="scroll-m-20 text-3xl font-bold tracking-tight">
-        Home
+        Job Postings
       </h1>
       <div className="flex flex-row justify-between items-center px-10 bg-gray-200 w-[1280px] h-16 rounded-md mx-2 my-6 text-semibold">
         <IoIosSearch className="my-5 mr-4" size={28} opacity={0.5}/>
