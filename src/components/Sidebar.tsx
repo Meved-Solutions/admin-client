@@ -3,7 +3,7 @@ import { SiAwsorganizations } from "react-icons/si";
 
 const navItems = [
   { name: 'Home', icon: IoHomeOutline, path: '/' },
-  { name: 'Job Postings', icon: IoBriefcaseOutline , path: '/postings' },
+  { name: 'Postings', icon: IoBriefcaseOutline , path: '/postings' },
   { name: 'Organizations', icon: SiAwsorganizations, path: '/organizations' },
   { name: 'LogOut', icon: IoLogOutOutline  },
 ];
@@ -15,7 +15,7 @@ const Sidebar = () => {
       <div className='flex flex-row justify-center pt-3 text-3xl font-bold'>
         MVA
       </div>
-      <div className="pt-6 px-4">
+      <div className="pt-6 px-2">
         {navItems.map((item) => {
           const IconComponent = item.icon;
           return (
