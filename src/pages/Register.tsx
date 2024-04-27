@@ -1,36 +1,65 @@
 import React, { useState } from 'react';
 import { Button } from "@/components/ui/button"
 import { Input } from "@/components/ui/input"
+import axios from "axios"
+import { useSetRecoilState } from 'recoil';
+import { Admin, Authenticated } from '@/atom';
+import { useNavigate } from 'react-router-dom';
 
 const Register = () => {
+  const navigate = useNavigate();
+  const setAuthenticated = useSetRecoilState(Authenticated);
+  const setAdmin = useSetRecoilState(Admin);
+
   const [email, setEmail] = useState('');
+  const [name, setName] = useState('');
   const [password, setPassword] = useState('');
   const [confirmPassword, setConfirmPassword] = useState('');
   const [showPassword, setShowPassword] = useState(false);
   const [showConfirmPassword, setShowConfirmPassword] = useState(false);
 
-  const handleSubmit = (event) => {
+  const handleSubmit = async (event) => {
     event.preventDefault();
     if (password !== confirmPassword) {
       console.log('Error: Password and confirm password do not match');
       return;
     }
-    console.log(`Email: ${email}, Password: ${password}`);
+    const data = {
+      name : name,
+      email : email,
+      password : password
+    }
+
+    const res = await axios.post(`${import.meta.env.VITE_BACKEND_URL}/api/adminAuth/register` ,data);
+
+    console.log(res.data);
+    localStorage.setItem("token" ,res.data.token );
+    localStorage.setItem("_id" ,res.data.newAdmin._id );
+    setAuthenticated(true);
+    setAdmin(res.data.newAdmin);
+    navigate('/');
+    window.location.reload();
   };
 
   return (
-    <form onSubmit={handleSubmit} className="bg-gray-200 h-screen py-24">
+    <form onSubmit={handleSubmit} className="bg-gray-200 min-h-screen py-24">
       <div className="flex flex-row justify-center">
-        <div className="w-96 h-[575px] rounded-md shadow-md bg-white">
+        <div className="px-8 py-2 rounded-md shadow-md bg-white">
           <div className="flex flex-col items-center py-6 ">
             <h2 className="scroll-m-20 text-3xl font-bold tracking-tight first:mt-0">
               Register
             </h2>
-            <div className="w-80">
+            <div className="w-80 overflow-auto">
               <h4 className="scroll-m-20 my-4 font-semibold tracking-tight">
                 Email
               </h4>
               <Input type="text" placeholder="Enter Your Email" value={email} onChange={(e) => setEmail(e.target.value)} />
+            </div>
+            <div className="w-80">
+              <h4 className="scroll-m-20 my-4 font-semibold tracking-tight">
+                Name
+              </h4>
+              <Input type="text" placeholder="Enter Your Name" value={name} onChange={(e) => setName(e.target.value)} />
             </div>
             <div className="w-80">
               <h4 className="scroll-m-20 my-4 font-semibold tracking-tight">

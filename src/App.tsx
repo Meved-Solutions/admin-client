@@ -8,10 +8,30 @@ import JobPostings from './pages/JobPostings';
 import Organizations from './pages/Organizations';
 import Register from './pages/Register';
 import JobPosting from './pages/JobPosting';
+// import Employees from './pages/Employees';
+import Applicants from './pages/Applicants';
+// import Messages from './pages/Messages';
+import Settings from './pages/Settings';
+import { useRecoilValue } from 'recoil';
+import { Authenticated } from './atom';
 
 const Navigate = () => {
 
-  const [isAuthenticated, setIsAuthenticated] = useState(true);
+  const isAuthenticated = useRecoilValue(Authenticated);
+  const navigate = useNavigate();
+  const location = useLocation();
+
+  useEffect(() => {
+    if (!isAuthenticated) {
+      if (location.pathname === "/") {
+        navigate('/auth');
+      }
+    } else {
+      if (location.pathname === "/") {
+        navigate('/');
+      }
+    }
+  }, [navigate, location, isAuthenticated]);
 
   return(
     <div>
@@ -26,6 +46,11 @@ const Navigate = () => {
           <Route path='/postings' element={<JobPostings/>}/>
           <Route path='/posting/:id' element={<JobPosting/>}/>
           <Route path='/organizations' element={<Organizations/>}/>
+          <Route path='/applicants' element={<Applicants/>}/>
+          <Route path='/settings' element={<Settings/>}/>
+          {/* <Route path='/employees' element= {<Employees/>}/> */}
+          {/* <Route path='/messages' element={<Messages/>}/> */}
+
         </Routes>
         </div>
       }

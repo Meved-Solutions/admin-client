@@ -1,15 +1,35 @@
 import React, { useState } from 'react';
 import { Button } from "@/components/ui/button"
 import { Input } from "@/components/ui/input"
+import axios from 'axios';
+import { useNavigate } from 'react-router-dom';
+import { useSetRecoilState } from 'recoil';
+import { Admin, Authenticated } from '@/atom';
 
 const Login = () => {
+  const navigate = useNavigate();
+  const setAuthenticated = useSetRecoilState(Authenticated);
+  const setAdmin = useSetRecoilState(Admin);
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
   const [showPassword, setShowPassword] = useState(false);
 
-  const handleSubmit = (event) => {
+  const handleSubmit = async (event) => {
     event.preventDefault();
-    console.log(`Email: ${email}, Password: ${password}`);
+    const data = {
+      email : email,
+      password : password
+    }
+
+    const res = await axios.post(`${import.meta.env.VITE_BACKEND_URL}/api/adminAuth/login` ,data);
+    console.log(res.data);
+    localStorage.setItem("token" ,res.data.token );
+    localStorage.setItem("_id" ,res.data.admin._id );
+    setAuthenticated(true);
+    setAdmin(res.data.admin);
+    navigate('/');
+    window.location.reload();
+    
   };
 
   return (
