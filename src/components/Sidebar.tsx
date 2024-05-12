@@ -11,11 +11,11 @@ const Sidebar = () => {
   const setAuthenticated = useSetRecoilState(Authenticated);
 
   const navItems = [
-    { name: 'Home', icon: IoHomeOutline, path: '/' },
+    // { name: 'Home', icon: IoHomeOutline, path: '/' },
     { name: 'Postings', icon: IoBriefcaseOutline , path: '/postings' },
     { name : 'Applicants' , icon : IoPersonOutline , path: '/applicants'  },
     { name: 'Organizations', icon: SiAwsorganizations, path: '/organizations' },
-    { name: 'Settings', icon: IoSettingsOutline, path: '/settings' },
+    // { name: 'Settings', icon: IoSettingsOutline, path: '/settings' },
     // { name: 'Messages', icon: FiMessageSquare, path: '/messages' },  
     // { name : 'Employees', icon: IoPeopleOutline , path: '/employees'},
     { name: 'LogOut', icon: IoLogOutOutline  },

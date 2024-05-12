@@ -14,6 +14,8 @@ import Applicants from './pages/Applicants';
 import Settings from './pages/Settings';
 import { useRecoilValue } from 'recoil';
 import { Authenticated } from './atom';
+import Applicant from './pages/Applicant';
+import Organization from './pages/Organization';
 
 const Navigate = () => {
 
@@ -28,7 +30,7 @@ const Navigate = () => {
       }
     } else {
       if (location.pathname === "/") {
-        navigate('/');
+        navigate('/postings');
       }
     }
   }, [navigate, location, isAuthenticated]);
@@ -46,7 +48,9 @@ const Navigate = () => {
           <Route path='/postings' element={<JobPostings/>}/>
           <Route path='/posting/:id' element={<JobPosting/>}/>
           <Route path='/organizations' element={<Organizations/>}/>
+          <Route path='/organizations/:id' element={<Organization/>}/>
           <Route path='/applicants' element={<Applicants/>}/>
+          <Route path='/applicants/:id' element={<Applicant/>}/>
           <Route path='/settings' element={<Settings/>}/>
           {/* <Route path='/employees' element= {<Employees/>}/> */}
           {/* <Route path='/messages' element={<Messages/>}/> */}

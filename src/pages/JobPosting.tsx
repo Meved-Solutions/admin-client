@@ -11,161 +11,162 @@ import {
     DialogTrigger,
   } from "@/components/ui/dialog";
 import InputDropdown from '@/components/ui/InputDropdown';
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
+import { useLocation } from 'react-router-dom';
+import axios from 'axios';
+import ApplicationCard from '@/components/ui/ApplicationCard';
 
 
 const JobPosting = () => {
 
+    const location = useLocation()
+    const pathname = location.pathname;
+    const _id = pathname.split('/').pop();
+
   const [selectedOption, setSelectedOption] = useState('');
+  const [applications,setApplications] = useState([]);
+  const [posting,setPosting] = useState({});
 
-  const handleChange = (event) => {
-    setSelectedOption(event.target.value);
-  };
+  useEffect(()=>{
 
-  const applicants = [
-    {
-      name: 'Applicant 1',
-      location: 'Location 1',
-      email: 'applicant1@example.com',
-      phone: '123-456-7890',
-      status: 'Pending',
-    },
-    {
-      name: 'Applicant 2',
-      location: 'Location 2',
-      email: 'applicant2@example.com',
-      phone: '098-765-4321',
-      status: 'Accepted',
-    },
-    // Add more applicants as needed
-  ];
+    const fetchPosting = async () => {
+      const res = await axios.get(`${import.meta.env.VITE_BACKEND_URL}/api/posting/getPosting/${_id}`,{
+        headers : {
+          "Authorization" : localStorage.getItem("token")
+        },
+        withCredentials : true
+      });
+
+      console.log(res.data);
+      setPosting(res.data)
+    }
+
+    const fectchApplications = async () =>{
+      const res = await axios.get(`${import.meta.env.VITE_BACKEND_URL}/api/application/getApplicationsByPosting/${_id}`,{
+      headers: {
+          'Authorization': localStorage.getItem("token"),
+          },
+          withCredentials : true
+      })
+
+      console.log(res.data);
+      setApplications(res.data)
+    }
+      
+    fetchPosting();
+    fectchApplications()
+  },[_id])
+  
+
+  
 
   return (
-    <div className="px-10 py-4 w-full overflow-none custom-scroll">
+    <div className="px-4 py-4 w-full " style={{ maxHeight: '100vh', overflowY: 'auto' }}>
       <h1 className="scroll-m-20 text-4xl font-bold tracking-tight">
         Job Posting
       </h1>
       <Tabs defaultValue="postingDetails" className="w-full my-2">
         <TabsList>
-          <TabsTrigger value="postingDetails">Posting Details</TabsTrigger>
-          <TabsTrigger value="applicationsReceived">Applications Received</TabsTrigger>
+          <TabsTrigger value="postingDetails">Details</TabsTrigger>
+          <TabsTrigger value="applicationsReceived">Applications</TabsTrigger>
         </TabsList>
         <TabsContent value="postingDetails">
-          {/* Posting Details content goes here */}
-          <div>
-            <h4 className="scroll-m-20 my-2 text-xl font-semibold tracking-tight">
-              Job Title
-            </h4>
-            <Input disabled placeholder='Job Title'/>
-            <h4 className="scroll-m-20 my-2 text-xl font-semibold tracking-tight">
-              Job Domain
-            </h4>
-            <Input disabled placeholder='Job Domain'/>
-            <h4 className="scroll-m-20 my-2 text-xl font-semibold tracking-tight">
-              Experience Required
-            </h4>
-            <Input disabled placeholder='Experience Required'/>
-            <h4 className="scroll-m-20 my-2 text-xl font-semibold tracking-tight">
-              Notice Period
-            </h4>
-            <Input disabled placeholder='Notice Period'/>
-            <h4 className="scroll-m-20 my-2 text-xl font-semibold tracking-tight">
-              Job Description
-            </h4>
-            <textarea disabled placeholder='Job Description' className='ring-2 ring-gray-50 px-2 w-full h-24 text-medium text-gray-50 bg-white rounded-md'/>
+          <div className="flex flex-row items-center gap-3">
+                <div>
+                        <h1 className="scroll-m-20 text-3xl font-bold tracking-tight">
+                            Info
+                        </h1>
+                </div>
           </div>
+          <div className="mt-6">
+                    <h4 className="scroll-m-20 text-sm font-medium tracking-tight">
+                    Posting Status
+                    </h4>
+                    <Input disabled type="text" value={posting.postingStatus ? "Showing" : "Hidden"} className="mt-2 w-full"/>
+          </div>
+          <div className="mt-6">
+                    <h4 className="scroll-m-20 text-sm font-medium tracking-tight">
+                    Title
+                    </h4>
+                    <Input disabled type="text" value={posting.title} className="mt-2 w-full"/>
+          </div>
+          <div className="mt-6">
+                    <h4 className="scroll-m-20 text-sm font-medium tracking-tight">
+                    Job Description
+                    </h4>
+                    <textarea disabled  value={posting.job_description} className="mt-2 w-full"/>
+          </div>
+          <div className="mt-6">
+                    <h4 className="scroll-m-20 text-sm font-medium tracking-tight">
+                    Minimum Experience
+                    </h4>
+                    <Input disabled type="text" value={posting.minExperience} className="mt-2 w-full"/>
+          </div>
+          <div className="mt-6">
+                    <h4 className="scroll-m-20 text-sm font-medium tracking-tight">
+                    Location
+                    </h4>
+                    {posting.location?.map((loc, index) => (
+                    <div key={index}>
+                        <Input disabled type="text" value={loc?.name} className="mt-2 w-full"/>
+                        <Input disabled type="text" value={loc?.state} className="mt-2 w-full"/>
+                        <Input disabled type="text" value={loc?.country} className="mt-2 w-full"/>
+                    </div>
+                ))}
+                </div>
+                <div className="mt-6">
+                    <h4 className="scroll-m-20 text-sm font-medium tracking-tight">
+                    Number of Vacancies
+                    </h4>
+                    <Input disabled type="text" value={posting.numberOfVacancies} className="mt-2 w-full"/>
+                </div>
+                <div className="mt-6">
+                    <h4 className="scroll-m-20 text-sm font-medium tracking-tight">
+                    Notice Period
+                    </h4>
+                    <Input disabled type="text" value={posting.notice_period} className="mt-2 w-full"/>
+                </div>
+                <div className="mt-6">
+                    <h4 className="scroll-m-20 text-sm font-medium tracking-tight">
+                    Salary Range
+                    </h4>
+                    <Input disabled type="text" value={posting.salaryRange?.min} className="mt-2 w-full"/>
+                    <Input disabled type="text" value={posting.salaryRange?.max} className="mt-2 w-full"/>
+                </div>
+                <div className="mt-6">
+                    <h4 className="scroll-m-20 text-sm font-medium tracking-tight">
+                    Department
+                    </h4>
+                    <Input disabled type="text" value={posting.department} className="mt-2 w-full"/>
+                </div>
+                <div className="mt-6">
+                    <h4 className="scroll-m-20 text-sm font-medium tracking-tight">
+                    Domain
+                    </h4>
+                    <Input disabled type="text" value={posting.domain} className="mt-2 w-full"/>
+                </div>
+                <div className="mt-6">
+                    <h4 className="scroll-m-20 text-sm font-medium tracking-tight">
+                    Skills
+                    </h4>
+                    {posting.skills?.map((skill, index) => (
+                        <Input key={index} disabled type="text" value={skill} className="mt-2 w-full"/>
+                    ))}
+                </div>
+                <div className="mt-6">
+                    <h4 className="scroll-m-20 text-sm font-medium tracking-tight">
+                    Evaluation
+                    </h4>
+                    {posting.evaluation?.map((evalu, index) => (
+                        <Input key={index} disabled type="text" value={evalu.question} className="mt-2 w-full"/>
+                    ))}
+                </div>
         </TabsContent>
         <TabsContent value="applicationsReceived">
-          {/* Applications Received content goes here */}
           <div className= "flex flex-col gap-3 bg-gray-100 rounded-md h-[520px] overflow-auto py-2 px-2">
-            {applicants.map((applicant, index) => (
-              <div key={index} className="flex flex-col justify-between bg-gray-200 rounded-md pl-2 pr-4 py-1 h-24">
-                <div className="flex flex-row justify-between">
-                  <div className="font-semibold text-xl">
-                    {applicant.name}
-                  </div>
-                  <div className="flex flex-row gap-3 text-sm font-medium">
-                    <div className="flex flex-row items-center gap-2">
-                      <IoLocationOutline />
-                      <div>{applicant.location}</div>
-                    </div>
-                    <div className="flex flex-row items-center gap-2">
-                      <IoMailOutline />
-                      <div>{applicant.email}</div>
-                    </div>
-                    <div className="flex flex-row items-center gap-2">
-                      <IoCallOutline />
-                      <div>{applicant.phone}</div>
-                    </div>
-                  </div>
-                </div>
-                <div className="flex flex-row justify-between mb-1">
-                  <Dialog>
-                    <DialogTrigger>
-                       <Button>Info</Button>
-                    </DialogTrigger>
-                    <DialogContent className='overflow-auto h-[70vh]'>
-                        <DialogHeader>
-                        <DialogTitle>
-                        <h2 className="scroll-m-20 my-2 text-xl font-semibold tracking-tight">
-                            Applicant Description
-                        </h2>
-                        </DialogTitle>
-                        </DialogHeader>
-                        <div>
-                        <h4 className="scroll-m-20 my-2 text-xl font-semibold tracking-tight">
-                        Name
-                        </h4>
-                        <Input disabled placeholder='Applicant Name'/>
-                        <h4 className="scroll-m-20 my-2 text-xl font-semibold tracking-tight">
-                        Email
-                        </h4>
-                        <Input disabled placeholder='Email'/>
-                        <h4 className="scroll-m-20 my-2 text-xl font-semibold tracking-tight">
-                        Phone
-                        </h4>
-                        <Input disabled placeholder='Phone'/>
-                        <h4 className="scroll-m-20 my-2 text-xl font-semibold tracking-tight">
-                        Location
-                        </h4>
-                        <Input disabled placeholder='Location'/>
-                        <h4 className="scroll-m-20 my-2 text-xl font-semibold tracking-tight">
-                        Image
-                        </h4>
-                        <Input disabled placeholder='Image'/>
-                        <h4 className="scroll-m-20 my-2 text-xl font-semibold tracking-tight">
-                        Gender
-                        </h4>
-                        <Input disabled placeholder='Gender'/>
-                        <h4 className="scroll-m-20 my-2 text-xl font-semibold tracking-tight">
-                        Bio
-                        </h4>
-                        <textarea disabled placeholder='Bio' className='ring-2 ring-gray-50 px-2 w-full h-24 text-medium text-gray-50 bg-white rounded-md'/>
-                        <h4 className="scroll-m-20 my-2 text-xl font-semibold tracking-tight">
-                        Years of Experience
-                        </h4>
-                        {/* You can map over the years_of_experience array to generate the inputs */}
-                        <h4 className="scroll-m-20 my-2 text-xl font-semibold tracking-tight">
-                        Education
-                        </h4>
-                        {/* You can map over the education array to generate the inputs */}
-                        <h4 className="scroll-m-20 my-2 text-xl font-semibold tracking-tight">
-                        Resume
-                        </h4>
-                        <Input disabled placeholder='Resume'/>
-                        </div>
-                        <h4 className="scroll-m-20 mt-2 text-xl font-semibold tracking-tight">
-                            Status
-                        </h4>
-                        <InputDropdown options={["Accepted", "Pending", "Rejected"]} onChange={handleChange}/>
-                    </DialogContent>
-                    </Dialog>
-                  <div>
-                    {applicant.status}
-                  </div>
-                </div>
-              </div>
-            ))}
+                {applications.map((application,index)=>(
+                      <ApplicationCard key={index} application={application}/>
+                ))}
           </div>
         </TabsContent>
       </Tabs>
