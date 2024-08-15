@@ -1,11 +1,10 @@
 import ApplicantCard from "@/components/ApplicantCard";
 import { Button } from "@/components/ui/button";
-import axios from "axios"
-import { useEffect, useState } from "react"
+import axios from "axios";
+import { useEffect, useState } from "react";
 import {
   Dialog,
   DialogContent,
-  DialogDescription,
   DialogHeader,
   DialogTitle,
   DialogTrigger,
@@ -16,36 +15,41 @@ import {
   SelectItem,
   SelectTrigger,
   SelectValue,
-} from "@/components/ui/select"
+} from "@/components/ui/select";
+
+interface Applicant {
+  domain?: string;
+  physicallyHandiCapped?: boolean;
+  experience?: { [key: string]: any }[];
+}
 
 const Applicants = () => {
+  const [applicants, setApplicants] = useState<Applicant[]>([]);
+  const [domain, setDomain] = useState<string>("");
+  const [disabled, setDisabled] = useState<boolean>(false);
+  const [experienced, setExperienced] = useState<boolean>(false);
 
-  const [applicants, setApplicants] = useState([]);
-  const [domain ,setDomain] = useState("");
-  const [disabled,setDisabled] = useState(false);
-  const [experienced,setExperienced] = useState(false);
+  useEffect(() => {
+    const fetchApplicants = async () => {
+      const res = await axios.get(`${import.meta.env.VITE_BACKEND_URL}/api/applicant/getApplicants`, {
+        headers: {
+          "Authorization": localStorage.getItem("token") || "",
+        },
+        withCredentials: true,
+      });
 
-  useEffect(()=>{
-   const fetchApplicants = async() =>{
-    const res = await axios.get(`${import.meta.env.VITE_BACKEND_URL}/api/applicant/getApplicants`,{
-      headers : {
-        "Authorization" : localStorage.getItem("token"),
-      },
-      withCredentials : true
-    })
+      console.log(res.data);
+      setApplicants(res.data);
+    };
 
-    console.log(res.data);
-    setApplicants(res.data);
-   }
+    fetchApplicants();
+  }, []);
 
-    fetchApplicants()
-  },[])
-
-  const filteredApplicants = applicants.filter(applicant=>
-    (domain === "" ? applicant : applicant.domain === domain) && 
-    (disabled ? applicant.physicallyHandiCapped === true : applicant) &&
-    (experienced &&  applicant.experience.length > 0 ? applicant.experience : applicant)
-  )
+  const filteredApplicants = applicants.filter(applicant =>
+    (domain === "" ? true : applicant.domain === domain) &&
+    (disabled ? applicant.physicallyHandiCapped === true : true) &&
+    (experienced ? applicant.experience && applicant.experience.length > 0 : true)
+  );
 
   return (
     <div className="px-10 py-4 w-screen">
@@ -59,7 +63,7 @@ const Applicants = () => {
           <Dialog>
             <DialogTrigger>
               <Button>
-                Filter Applicants 
+                Filter Applicants
               </Button>
             </DialogTrigger>
             <DialogContent className="h-[70vh] overflow-auto">
@@ -67,60 +71,60 @@ const Applicants = () => {
                 <DialogTitle>Filter Postings</DialogTitle>
               </DialogHeader>
               <div>
-                  <h4 className="scroll-m-20 my-2 font-semibold tracking-tight">
-                    Domain
-                  </h4>
-                  <Select onValueChange={(value)=>{setDomain(value)}}>
-                          <SelectTrigger className="w-full">
-                            <SelectValue placeholder="Select Domain" />
-                          </SelectTrigger>
-                          <SelectContent>
-                            <SelectItem value="Software">Software</SelectItem>
-                            <SelectItem value="Marketing">Marketing</SelectItem>
-                            <SelectItem value="Management">Management</SelectItem>
-                            <SelectItem value="Consultancy">Consultancy</SelectItem>
-                          </SelectContent>
-                  </Select>
+                <h4 className="scroll-m-20 my-2 font-semibold tracking-tight">
+                  Domain
+                </h4>
+                <Select onValueChange={(value) => { setDomain(value); }}>
+                  <SelectTrigger className="w-full">
+                    <SelectValue placeholder="Select Domain" />
+                  </SelectTrigger>
+                  <SelectContent>
+                    <SelectItem value="Software">Software</SelectItem>
+                    <SelectItem value="Marketing">Marketing</SelectItem>
+                    <SelectItem value="Management">Management</SelectItem>
+                    <SelectItem value="Consultancy">Consultancy</SelectItem>
+                  </SelectContent>
+                </Select>
               </div>
               <div>
-                  <h4 className="scroll-m-20 my-2 font-semibold tracking-tight">
-                    Physically Disabled
-                  </h4>
-                  <Select onValueChange={(value)=>{setDisabled(value === 'true')}}>
-                          <SelectTrigger className="w-full">
-                            <SelectValue/>
-                          </SelectTrigger>
-                          <SelectContent>
-                            <SelectItem value="true">Yes</SelectItem>
-                            <SelectItem value="false">No</SelectItem>
-                          </SelectContent>
-                  </Select>
+                <h4 className="scroll-m-20 my-2 font-semibold tracking-tight">
+                  Physically Disabled
+                </h4>
+                <Select onValueChange={(value) => { setDisabled(value === 'true'); }}>
+                  <SelectTrigger className="w-full">
+                    <SelectValue />
+                  </SelectTrigger>
+                  <SelectContent>
+                    <SelectItem value="true">Yes</SelectItem>
+                    <SelectItem value="false">No</SelectItem>
+                  </SelectContent>
+                </Select>
               </div>
               <div>
-                  <h4 className="scroll-m-20 my-2 font-semibold tracking-tight">
-                    Experienced
-                  </h4>
-                  <Select onValueChange={(value)=>{setDisabled(value === 'true')}}>
-                          <SelectTrigger className="w-full">
-                            <SelectValue/>
-                          </SelectTrigger>
-                          <SelectContent>
-                            <SelectItem value="true">Yes</SelectItem>
-                            <SelectItem value="false">No</SelectItem>
-                          </SelectContent>
-                  </Select>
+                <h4 className="scroll-m-20 my-2 font-semibold tracking-tight">
+                  Experienced
+                </h4>
+                <Select onValueChange={(value) => { setExperienced(value === 'true'); }}>
+                  <SelectTrigger className="w-full">
+                    <SelectValue />
+                  </SelectTrigger>
+                  <SelectContent>
+                    <SelectItem value="true">Yes</SelectItem>
+                    <SelectItem value="false">No</SelectItem>
+                  </SelectContent>
+                </Select>
               </div>
             </DialogContent>
           </Dialog>
         </div>
       </div>
-      <div className="mt-6  grid grid-cols-3 gap-4 overflow-y-auto" style={{ maxHeight: '400px' }}>
-        {applicants.map((applicant,index)=>(
-          <ApplicantCard key={index} applicant={applicant}/>
+      <div className="mt-6 grid grid-cols-3 gap-4 overflow-y-auto" style={{ maxHeight: '400px' }}>
+        {filteredApplicants.map((applicant, index) => (
+          <ApplicantCard key={index} applicant={applicant} />
         ))}
       </div>
-  </div>
-  )
-}
+    </div>
+  );
+};
 
-export default Applicants
+export default Applicants;

@@ -1,5 +1,6 @@
 import { useNavigate } from "react-router-dom"
 
+//@ts-ignore
 const ApplicantCard = ({applicant}) => {
     const navigate = useNavigate();
   return (

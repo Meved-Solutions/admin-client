@@ -1,44 +1,48 @@
-import React, { useState } from 'react';
-import { Button } from "@/components/ui/button"
-import { Input } from "@/components/ui/input"
-import axios from "axios"
+import React, { useState, FormEvent } from 'react';
+import { Button } from "@/components/ui/button";
+import { Input } from "@/components/ui/input";
+import axios from "axios";
 import { useSetRecoilState } from 'recoil';
 import { Admin, Authenticated } from '@/atom';
 import { useNavigate } from 'react-router-dom';
 
-const Register = () => {
+const Register: React.FC = () => {
   const navigate = useNavigate();
   const setAuthenticated = useSetRecoilState(Authenticated);
   const setAdmin = useSetRecoilState(Admin);
 
-  const [email, setEmail] = useState('');
-  const [name, setName] = useState('');
-  const [password, setPassword] = useState('');
-  const [confirmPassword, setConfirmPassword] = useState('');
-  const [showPassword, setShowPassword] = useState(false);
-  const [showConfirmPassword, setShowConfirmPassword] = useState(false);
+  const [email, setEmail] = useState<string>('');
+  const [name, setName] = useState<string>('');
+  const [password, setPassword] = useState<string>('');
+  const [confirmPassword, setConfirmPassword] = useState<string>('');
+  const [showPassword, setShowPassword] = useState<boolean>(false);
+  const [showConfirmPassword, setShowConfirmPassword] = useState<boolean>(false);
 
-  const handleSubmit = async (event) => {
+  const handleSubmit = async (event: FormEvent) => {
     event.preventDefault();
     if (password !== confirmPassword) {
       console.log('Error: Password and confirm password do not match');
       return;
     }
     const data = {
-      name : name,
-      email : email,
-      password : password
+      name: name,
+      email: email,
+      password: password
+    };
+
+    try {
+      const res = await axios.post(`${import.meta.env.VITE_BACKEND_URL}/api/adminAuth/register`, data);
+
+      console.log(res.data);
+      localStorage.setItem("token", res.data.token);
+      localStorage.setItem("_id", res.data.newAdmin._id);
+      setAuthenticated(true);
+      setAdmin(res.data.newAdmin);
+      navigate('/');
+      window.location.reload();
+    } catch (error) {
+      console.error('Error during registration:', error);
     }
-
-    const res = await axios.post(`${import.meta.env.VITE_BACKEND_URL}/api/adminAuth/register` ,data);
-
-    console.log(res.data);
-    localStorage.setItem("token" ,res.data.token );
-    localStorage.setItem("_id" ,res.data.newAdmin._id );
-    setAuthenticated(true);
-    setAdmin(res.data.newAdmin);
-    navigate('/');
-    window.location.reload();
   };
 
   return (
@@ -84,13 +88,13 @@ const Register = () => {
               </div>
             </div>
             <div className="mt-3">
-              <Button>Register</Button>
+              <Button type="submit">Register</Button>
             </div>
           </div>
         </div>
       </div>
     </form>
-  )
-}
+  );
+};
 
-export default Register
+export default Register;
